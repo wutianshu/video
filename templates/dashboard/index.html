@@ -1,0 +1,22 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block title %}
+    首页
+{% endblock %}
+
+{% block menu %}
+    <ul class="nav nav-pills nav-stacked">
+        <li role="presentation"><a href="{% url 'admin' %}">管理员菜单</a></li>
+        <li role="presentation"><a href="#">Profile</a></li>
+        <li role="presentation"><a href="#">Messages</a></li>
+    </ul>
+{% endblock %}
+
+
+{% block main %}
+    <div class="jumbotron" style="background-color: white">
+        <h1>Hello, world!</h1>
+        <p>123</p>
+        <p><a class="btn btn-primary btn-lg" href="#" role="button">了解更多</a></p>
+    </div>
+{% endblock %}
