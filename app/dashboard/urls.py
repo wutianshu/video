@@ -1,6 +1,6 @@
 from django.urls import path
-from app.dashboard.views.base import Index, Admin, User_login, Register, User_logout, Admin_setting
-from app.dashboard.views.extends import Extends
+from app.dashboard.views.base import Index, Admin, Admin_setting
+from app.dashboard.views.auth import User_login, Register, User_logout
 
 urlpatterns = [
     path('', Index.as_view(), name='index'),
