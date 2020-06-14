@@ -1,0 +1,97 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% load commer %}
+
+{% block title %}
+    创建视频
+{% endblock %}
+
+
+{% block main %}
+
+    <p>
+        <button id="videoid" type="button" class="btn btn-primary btn-lg">创建视频</button>
+        <span>{{ error }}</span>
+    </p>
+    <form class="form-group" id="video-form-area" action="{% url 'video' %}" method="post">
+        <div class="form-group">
+            <label class="sr-only" for="video_name">视频名称</label>
+            <div class="input-group">
+                <div class="input-group-addon">视频名称</div>
+                <input type="text" class="form-control" name="video_name" placeholder="视频名称">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="sr-only" for="video_image">视频海报</label>
+            <div class="input-group">
+                <div class="input-group-addon">视频海报</div>
+                <input type="text" class="form-control" name="video_image" placeholder="海报">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="sr-only" for="video_type">视频类型</label>
+            <div class="input-group">
+                <div class="input-group-addon">视频类型</div>
+                <select class="form-control" name="video_type">
+                    {% for type in types %}
+                        <option value="{{ type.name }}">{{ type.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="sr-only" for="video_origin">视频来源</label>
+            <div class="input-group">
+                <div class="input-group-addon">视频来源</div>
+                <select class="form-control" name="video_origin">
+                    {% for origin in origins %}
+                        <option value="{{ origin.name }}">{{ origin.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="sr-only" for="video_nationality">视频产地</label>
+            <div class="input-group">
+                <div class="input-group-addon">视频产地</div>
+                <select class="form-control" name="video_nationality">
+                    {% for nation in nationalities %}
+                        <option value="{{ nation.name }}">{{ nation.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">提交</button>
+    </form>
+
+    <table class="table table-hover">
+        <thead>
+        <th>ID</th>
+        <th>海报</th>
+        <th>名称</th>
+        <th>类型</th>
+        <th>来源</th>
+        <th>产地</th>
+        <th>状态</th>
+        <th>创建时间</th>
+        <th>修改时间</th>
+        <th>操作</th>
+        </thead>
+        {% for video in videos %}
+            <tbody>
+            <td>{{ video.id }}</td>
+            <td><img src="{{ video.image }}" class="img-little"></td>
+            <td>{{ video.video_name }}</td>
+            <td>{{ video.video_type|type_video }}</td>
+            <td>{{ video.origin|origin_video }}</td>
+            <td>{{ video.nationality|nationality_video }}</td>
+            <td>{{ video.status }}</td>
+            <td>{{ video.create_time }}</td>
+            <td>{{ video.update_time }}</td>
+            <td><a href="#">查看</a>|<a href="#">添加内容</a></td>
+            </tbody>
+        {% endfor %}
+    </table>
+{% endblock %}
+

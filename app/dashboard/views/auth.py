@@ -5,16 +5,22 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.hashers import make_password
 
 
+def permission(request):
+    TEMPLATE = 'dashboard/auth/permission.html'
+    return render(request, TEMPLATE)
+
 
 class User_login(View):
     TEMPLATE = 'dashboard/auth/login.html'
 
     def get(self, request):
-        return render(request, self.TEMPLATE)
+        next = request.GET.get('next')
+        return render(request, self.TEMPLATE, {"next": next})
 
     def post(self, request):
         username = request.POST.get("username")
         password = request.POST.get("password")
+        next = request.POST.get("next", "")
         if not User.objects.filter(username=username).exists():
             data = {"error": "用户名不存在"}
             return render(request, self.TEMPLATE, data)
@@ -23,6 +29,8 @@ class User_login(View):
             data = {"error": "密码错误"}
             return render(request, self.TEMPLATE, data)
         login(request, user)
+        if next:
+            return redirect(next)
         return redirect(reverse("index"))
 
 
@@ -60,4 +68,3 @@ class Register(View):
 
         User.objects.create(username=username, password=make_password(password))
         return redirect(reverse('login'))
-

@@ -1,3 +1,6 @@
-from django.contrib import admin
+# coding: utf-8
+# admin.py
 
-# Register your models here.
+from django.contrib import admin
+from app.models.video import Video, VideoStar, VideoSub
+from app.models.auth import ClientUser
