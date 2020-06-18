@@ -1,5 +1,5 @@
 from django.urls import path
-from app.dashboard.views.base import Index, Admin, Admin_setting, VideoCreate
+from app.dashboard.views.base import Index, Admin, Admin_setting, VideoHandle, FileCreat, FileModify, VideoDelete, Test
 from app.dashboard.views.auth import User_login, Register, User_logout, permission
 
 urlpatterns = [
@@ -11,5 +11,11 @@ urlpatterns = [
     path('admin/setting', Admin_setting.as_view(), name='admin_setting'),
     path('admin/permission', permission, name='admin_permission'),
 
-    path('video', VideoCreate.as_view(), name='video')
+    path('video', VideoHandle.as_view(), name='video'),
+    path('file/<str:videoid>', FileCreat.as_view(), name='file'),
+    path('filemodify', FileModify.as_view(), name='filemodify'),
+    path('video/delete/<str:videoid>', VideoDelete.as_view(), name='video_delete'),
+
+    path('test', Test.as_view(), name='test'),
+
 ]

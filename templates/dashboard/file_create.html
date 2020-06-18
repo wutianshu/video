@@ -1,0 +1,233 @@
+{% load static %}
+{% load commer %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+            创建视频文件
+        {% endblock %}
+    </title>
+
+    <script src="{% static 'dashboard/js/jquery.js' %}"></script>
+    <script src="{% static 'dashboard/js/bootstrap.min.js' %}"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <script src="{% static 'dashboard/js/base.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'dashboard/css/base.css' %}">
+</head>
+<body>
+{% block body %}
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                </button>
+                <a class="navbar-brand" href="#">Brand</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">{{ user }} <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Action</a></li>
+                            <li><a href="#">Another action</a></li>
+                            <li><a href="#">Something else here</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{% url 'logout' %}">登出</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="col-xs-2 col-sm-2 col-md-2">
+        {% block menu %}
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation"><a href="{% url 'admin' %}">管理员菜单</a></li>
+                <li role="presentation"><a href="{% url 'video' %}">视频</a></li>
+                <li role="presentation"><a href="#">Messages</a></li>
+            </ul>
+        {% endblock %}
+
+    </div>
+    <div class="col-xs-10 col-sm-10 col-md-10">
+        {% block main %}
+            <p>
+                <button id="file_addr" type="button" class="btn btn-primary btn-lg">添加视频地址</button>
+                <button id="actor_info" type="button" class="btn btn-primary btn-lg">创建演员信息</button>
+            </p>
+            <div class="panel panel-default" id="file-form-area">
+                <div class="panel-heading">添加视频地址</div>
+                <div class="panel-body">
+                    <form class="form-group" action="{% url 'file' videoid=videoid %}"
+                          method="post">
+                        <div class="form-group hidden">
+                            <label class="sr-only" for="file_videoid">videoid</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">videoid</div>
+                                <input type="text" class="form-control" name="file_videoid" value={{ videoid }}>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="videl_url">视频URL</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">视频URL</div>
+                                <input type="text" class="form-control" name="videl_url" placeholder="视频URL">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="number">第几集</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">第几集</div>
+                                <input type="number" class="form-control" name="number" placeholder="第几集">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">提交</button>
+                        {{ file_info }}
+                    </form>
+                </div>
+            </div>
+            <div class="panel panel-default" id="actor-form-area">
+                <div class="panel-heading">添加演员信息</div>
+                <div class="panel-body">
+                    <form class="form-group" action="{% url 'file' videoid=videoid %}"
+                          method="post">
+                        <div class="form-group hidden">
+                            <label class="sr-only" for="actor_videoid">videoid</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">videoid</div>
+                                <input type="text" class="form-control" name="actor_videoid" value={{ videoid }}>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="actor_name">演员姓名</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">演员姓名</div>
+                                <input type="text" class="form-control" name="actor_name" placeholder="演员姓名">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="actor_type">角色</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">角色</div>
+                                <select class="form-control" name="actor_type">
+                                    {% for role in startIdentify %}
+                                        <option value="{{ role.name }}">{{ role.label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">提交</button>
+                        {{ actor_info }}
+                    </form>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">视频信息</div>
+                <div class="panel-body">
+                    <table class="table table-hover" id="table-video">
+                        <thead>
+                        <th>ID</th>
+                        <th>第几集</th>
+                        <th>视频地址</th>
+                        <th>操作</th>
+                        </thead>
+                        {% for videosub in video_subs %}
+                            <tbody>
+                            <td>{{ videosub.id }}</td>
+                            <td>{{ videosub.number }}</td>
+                            <td>{{ videosub.url }}</td>
+                            <td>
+                                <a type="button" class="btn btn-primary btn-sm" href="{{ videosub.url }}"
+                                   target="_blank">查看</a>
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                        data-target="#exampleModal"
+                                        data-id="{{ videosub.id }}"
+                                        data-number="{{ videosub.number }}"
+                                        data-url="{{ videosub.url }}"
+                                        data-videoid="{{ videoid }}">
+                                    编辑
+                                </button>
+                                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                                     aria-labelledby="exampleModalLabel">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <h4 class="modal-title" id="exampleModalLabel">修改视频</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{% url 'filemodify' %}" method="post">
+                                                    <div class="form-group"  hidden>
+                                                        <label for="videoid" class="control-label">视频ID</label>
+                                                        <input type="text" class="form-control" id="videoid" name="videoid">
+                                                    </div>
+                                                    <div class="form-group" hidden>
+                                                        <label for="videofileid" class="control-label">视频文件ID</label>
+                                                        <input type="text" class="form-control" id="videofileid" name="videofileid">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="videonumber" class="control-label">第几集</label>
+                                                        <input type="number" class="form-control" id="videonumber" name="videonumber">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="videlurl" class="control-label">视频地址</label>
+                                                        <input type="text" class="form-control" id="videlurl" name="videlurl">
+                                                    </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                    关闭
+                                                </button>
+                                                <input type="submit" class="btn btn-primary">
+                                            </div>
+                                                    </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            </tbody>
+                        {% endfor %}
+
+                    </table>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">演员信息</div>
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                        <th>姓名</th>
+                        <th>角色</th>
+                        <th>介绍</th>
+                        </thead>
+                        {% for videostar in video_stars %}
+                            <tbody>
+                            <td>{{ videostar.name }}</td>
+                            <td>{{ videostar.identify|identify_star }}</td>
+                            <td>{{ videostar.info }}</td>
+                            </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+        {% endblock %}
+    </div>
+{% endblock %}
+<script>
+    {% block script %}
+    {% endblock %}
+</script>
+
+</body>
+</html>

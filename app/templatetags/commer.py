@@ -1,7 +1,7 @@
 # coding:utf-8
 
 from django import template
-from app.models.video import VideoType, Origin, Nationality
+from app.models.video import VideoType, Origin, Nationality, StartIdentify
 
 register = template.Library()
 
@@ -23,5 +23,11 @@ def type_video(v):
 @register.filter(name='nationality_video')
 def nationality_video(v):
     for i in Nationality:
+        if i.value == v:
+            return i.label
+
+@register.filter(name='identify_star')
+def identify_star(v):
+    for i in StartIdentify:
         if i.value == v:
             return i.label

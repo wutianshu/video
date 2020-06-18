@@ -8,6 +8,7 @@ class Origin(Enum):
     youku = 'YOUKU'
     custom = 'CUSTOM'
 
+
 Origin.youku.label = '优酷'
 Origin.custom.label = '自制'
 
@@ -58,6 +59,17 @@ class Video(models.Model):
                                                                       self.status)
 
 
+class StartIdentify(Enum):
+    actor = 'ACTOR'
+    director = 'DIRECTOR'
+    actress = 'ACTRESS'
+
+
+StartIdentify.actor.label = '男演员'
+StartIdentify.actress.label = '女演员'
+StartIdentify.director.label = "导演"
+
+
 class VideoStar(models.Model):
     video = models.ForeignKey(Video, related_name="video_star", on_delete=models.SET_NULL, blank=True, null=True)
     name = models.CharField(max_length=200)
@@ -80,5 +92,4 @@ class VideoSub(models.Model):
         unique_together = ("video", "number")
 
     def __str__(self):
-        return "video:{},number:{}".format(self.video.id,self.number)
-
+        return "video:{},number:{}".format(self.video.id, self.number)
