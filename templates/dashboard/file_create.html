@@ -65,8 +65,12 @@
             <div class="panel panel-default" id="file-form-area">
                 <div class="panel-heading">添加视频地址</div>
                 <div class="panel-body">
-                    <form class="form-group" action="{% url 'file' videoid=videoid %}"
-                          method="post">
+                {% if video.origin == "YOUKU" %}
+                    <form class="form-group" action="{% url 'file' videoid=videoid %}" method="post">
+                {% else %}
+                    <form class="form-group" action="{% url 'file' videoid=videoid %}" enctype="multipart/form-data" method="post">
+                 {% endif %}
+
                         <div class="form-group hidden">
                             <label class="sr-only" for="file_videoid">videoid</label>
                             <div class="input-group">
@@ -74,6 +78,7 @@
                                 <input type="text" class="form-control" name="file_videoid" value={{ videoid }}>
                             </div>
                         </div>
+                        {% if video.origin == "YOUKU" %}
                         <div class="form-group">
                             <label class="sr-only" for="videl_url">视频URL</label>
                             <div class="input-group">
@@ -81,6 +86,16 @@
                                 <input type="text" class="form-control" name="videl_url" placeholder="视频URL">
                             </div>
                         </div>
+                        {% else %}
+                        <div class="form-group">
+                            <label class="sr-only" for="videl_url">视频URL</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">视频URL</div>
+                                <input type="file" class="form-control" name="videl_url" placeholder="视频URL">
+                            </div>
+                        </div>
+                        {% endif %}
+
                         <div class="form-group">
                             <label class="sr-only" for="number">第几集</label>
                             <div class="input-group">

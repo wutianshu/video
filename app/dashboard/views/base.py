@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from app.models.video import Origin, VideoType, Nationality, StartIdentify
 from app.models.video import Video, VideoStar, VideoSub
+from app.lib.commer_func import video_handel
+from app.task.task import sayHello
 
 
 def admin_auth(func):
@@ -174,30 +176,49 @@ class FileCreat(View):
     startIdentify = get_enum_list(StartIdentify)
 
     def get(self, request, videoid):
-
+        video = Video.objects.get(pk=videoid)
         video_subs = VideoSub.objects.filter(video=videoid)
         video_stars = VideoStar.objects.filter(video=videoid)
         return render(request, self.TEMPLATE,
-                      {"videoid": videoid,
+                      {"video": video,
+                       "videoid": videoid,
                        "startIdentify": self.startIdentify,
                        "video_subs": video_subs,
                        "video_stars": video_stars})
 
     def post(self, request, videoid):
+        video = Video.objects.get(pk=videoid)
         video_subs = VideoSub.objects.filter(video=videoid)
         video_stars = VideoStar.objects.filter(video=videoid)
-        if 'videl_url' in request.POST:
-            id = videoid
-            videl_url = request.POST.get('videl_url')
-            number = request.POST.get('number')
 
+        if 'number' in request.POST:
+            number = request.POST.get('number')
+            origin = video.origin
+            id = videoid
+            print(origin)
+            print(Origin.custom.value)
+            if origin == Origin.custom.value:
+                # 为上传文件
+                videl_file = request.FILES.get('videl_url')
+                if not all([id, videl_file, number]):
+                    return render(request, self.TEMPLATE, {"file_info": "必填字段为空",
+                                                           "videoid": videoid,
+                                                           "startIdentify": self.startIdentify,
+                                                           "video_subs": video_subs,
+                                                           "video_stars": video_stars,
+                                                           "video": video})
+                video_handel(videl_file, videoid, int(number))
+
+                return redirect("test")
+            # 非文件上传
+            videl_url = request.POST.get('videl_url')
             if not all([id, videl_url, number]):
                 return render(request, self.TEMPLATE, {"file_info": "必填字段为空",
                                                        "videoid": videoid,
                                                        "startIdentify": self.startIdentify,
                                                        "video_subs": video_subs,
-                                                       "video_stars": video_stars})
-
+                                                       "video_stars": video_stars,
+                                                       "video": video})
             video = Video.objects.get(pk=id)
             VideoSub.objects.create(video=video,
                                     number=number,
@@ -206,7 +227,8 @@ class FileCreat(View):
                           {"file_info": "创建成功", "videoid": videoid,
                            "startIdentify": self.startIdentify,
                            "video_subs": video_subs,
-                           "video_stars": video_stars})
+                           "video_stars": video_stars,
+                           "video": video})
         elif 'actor_name' in request.POST:
             id = videoid
             actor_name = request.POST.get('actor_name')
@@ -216,7 +238,8 @@ class FileCreat(View):
                                                        "videoid": videoid,
                                                        "startIdentify": self.startIdentify,
                                                        "video_subs": video_subs,
-                                                       "video_stars": video_stars})
+                                                       "video_stars": video_stars,
+                                                       "video": video})
             video = Video.objects.get(pk=id)
             VideoStar.objects.create(video=video,
                                      name=actor_name,
@@ -226,7 +249,8 @@ class FileCreat(View):
                            "videoid": videoid,
                            "startIdentify": self.startIdentify,
                            "video_subs": video_subs,
-                           "video_stars": video_stars})
+                           "video_stars": video_stars,
+                           "video": video})
 
 
 class FileModify(View):
@@ -242,7 +266,10 @@ class FileModify(View):
         videoSub.save()
         return redirect(reverse('file', kwargs={"videoid": videoId}))
 
-
+import datetime
 class Test(View):
     def get(self, request):
+        print(datetime.datetime.now())
+        sayHello.delay()
+        print(datetime.datetime.now())
         return render(request, 'dashboard/test.html')

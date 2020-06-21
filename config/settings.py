@@ -1,5 +1,7 @@
 # coding: utf-8
 import os
+import djcelery
+djcelery.setup_loader()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,7 +29,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
+    'djcelery'
 ]
+
+BROKER_URL = 'redis://localhost:6379/2'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/3'
+CELERY_IMPORTS = ('app.task.task',)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
