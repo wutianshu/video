@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views.generic import View
 from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
@@ -266,10 +266,26 @@ class FileModify(View):
         videoSub.save()
         return redirect(reverse('file', kwargs={"videoid": videoId}))
 
+
 import datetime
+
+
 class Test(View):
     def get(self, request):
-        print(datetime.datetime.now())
-        sayHello.delay()
-        print(datetime.datetime.now())
-        return render(request, 'dashboard/test.html')
+        # print(datetime.datetime.now())
+        # sayHello.delay()
+        # print(datetime.datetime.now())
+        print('cookies',request.COOKIES.get('myCookieNmae'))
+        print('session',request.session.get('user'))
+        response = render(request, 'dashboard/test.html')
+        response.set_cookie("myCookieNmae","wutianshu")
+        userId = request.COOKIES.get("userid")
+        if userId:
+            user = User.objects.get(pk=int(userId))
+        else:
+            response = render(request, 'dashboard/test.html')
+            response.set_cookie("userid", "wutianshu")
+        return response
+
+
+
